@@ -1,283 +1,361 @@
 {
-    "openapi": "3.0.3",
-    "info": {
-      "title": "Auth server",
-      "version": "1.0.0"
-    },
-    "paths": {
-      "/profile/{id}": {
-        "get": {
-          "tags": ["Профиль пользователя"],
-          "summary": "Возвращает данные пользователя по его id.",
-          "parameters": [
-              {
-                  "in": "path",
-                  "name": "id",
-                  "description": "Идентификатор пользователя",
-                  "required": true,
-                  "schema": { "type": "number" },
-                  "example": "15"
-              }
-          ],
-          "responses": {
-            "200": {
-              "description": "Подробные данные пользователя",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/userResponse"
-                  }
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Auth server",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/profile/{id}": {
+      "get": {
+        "tags": ["Профиль пользователя"],
+        "summary": "Возвращает данные пользователя по его id.",
+        "parameters": [
+            {
+                "in": "path",
+                "name": "id",
+                "description": "Идентификатор пользователя",
+                "required": true,
+                "schema": { "type": "number" },
+                "example": "15"
+            }
+        ],
+        "responses": {
+          "200": {
+            "description": "Подробные данные пользователя",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/userResponse"
                 }
               }
-            },
-            "404": {
-              "description": "Не удалось найти пользователя с таким id",
-              "content": {
-                  "application/json": {
-                      "schema": {
-                          "$ref": "#/components/schemas/errorResponse"
-                      }
-                  }
-              }
+            }
+          },
+          "404": {
+            "description": "Не удалось найти пользователя с таким id",
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "$ref": "#/components/schemas/errorResponse"
+                    }
+                }
             }
           }
+        }
+      },
+      "put": {
+        "tags": ["Профиль пользователя"],
+        "summary": "Обновляет данные пользователя с указанным id.",
+        "parameters": [
+            {
+                "in": "path",
+                "name": "id",
+                "description": "Идентификатор пользователя",
+                "required": true,
+                "schema": { "type": "number" },
+                "example": "15"
+            }
+        ],
+        "requestBody": {
+          "description": "Данные для обновления пользователя",
+          "required": true,
+          "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/userRequest"
+                }
+              }
+            }
         },
-        "put": {
-          "tags": ["Профиль пользователя"],
-          "summary": "Обновляет данные пользователя с указанным id.",
-          "parameters": [
-              {
-                  "in": "path",
-                  "name": "id",
-                  "description": "Идентификатор пользователя",
-                  "required": true,
-                  "schema": { "type": "number" },
-                  "example": "15"
-              }
-          ],
-          "requestBody": {
-            "description": "Данные для обновления пользователя",
-            "required": true,
-            "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/userRequest"
-                  }
-                }
-              }
-          },
-          "responses": {
-            "200": {
-              "description": "Подробные данные пользователя",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/userResponse"
-                  }
-                }
-              }
-            },
-            "404": {
-              "description": "Не удалось найти пользователя с таким id",
-              "content": {
-                  "application/json": {
-                      "schema": {
-                          "$ref": "#/components/schemas/errorResponse"
-                      }
-                  }
-              }
-            }
-          }
-        }
-      },
-      "/user/loggin": {
-        "post": {
-          "tags": ["Вход и регистрация"],
-          "summary": "Вход (Аутентификация)",
-          "requestBody": {
-            "description": "Учетные данные пользователя",
-            "required": true,
+        "responses": {
+          "200": {
+            "description": "Подробные данные пользователя",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/cridentialForEnterRequest"
+                  "$ref": "#/components/schemas/userResponse"
                 }
               }
             }
           },
-          "responses": {
-            "200": {
-              "description": "Подробные данные пользователя",
-              "content": {
+          "400": {
+            "description": "Если нарушено хотя бы одно из ограничений к телу запроса. Подробнее смотри схему тела запроса.",
+            "content": {
                 "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/userResponse"
-                  }
+                    "schema": {
+                        "$ref": "#/components/schemas/errorResponse"
+                    }
                 }
-              }
-            },
-            "403": {
-              "description": "Неверные учетные данные.",
-              "content": {
-                  "application/json": {
-                      "schema": {
-                          "$ref": "#/components/schemas/errorResponse"
-                      }
-                  }
-              }
+            }
+          },
+          "404": {
+            "description": "Не удалось найти пользователя с таким id",
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "$ref": "#/components/schemas/errorResponse"
+                    }
+                }
             }
           }
         }
-      },
-      "/user/register": {
-        "post": {
-          "tags": ["Вход и регистрация"],
-          "summary": "Регистрация",
-          "requestBody": {
-            "description": "Учетные данные пользователя",
-            "required": true,
+      }
+    },
+    "/profiles": {
+      "get": {
+        "tags": ["Профиль пользователя"],
+        "summary": "Возвращает часть выборки из всех пользователей отсортированной по дате регистрации",
+        "parameters": [
+            {
+                "in": "query",
+                "name": "page",
+                "description": "Номер страницы. Нумерация страниц начинается с 0.",
+                "required": true,
+                "schema": { "type": "number" },
+                "example": "1"
+            }
+        ],
+        "responses": {
+          "200": {
+            "description": "Подробные данные нескльких пользователей.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/cridentialForRegistrationRequest"
+                  "$ref": "#/components/schemas/userPageResponse"
                 }
-              }
-            }
-          },
-          "responses": {
-            "200": {
-              "description": "Подробные данные пользователя.",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/userResponse"
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": "Если не выполняется хотя бы одно из ограничений описанных для учетных данных регистрации",
-              "content": {
-                  "application/json": {
-                      "schema": {
-                          "$ref": "#/components/schemas/errorResponse"
-                      }
-                  }
               }
             }
           }
         }
       }
     },
-    "components": {
-      "schemas": {
-        "cridentialForEnterRequest": {
-          "description": "Учетные данные пользователя для входа.",
-          "type": "object",
-          "required": ["email", "password"],
-          "properties": {
-            "email": {
-              "type": "string",
-              "description": "Электронная почта"
-            },
-            "password": {
-              "type": "string",
-              "description": "Пароль"
+    "/user/loggin": {
+      "post": {
+        "tags": ["Вход и регистрация"],
+        "summary": "Вход (Аутентификация)",
+        "requestBody": {
+          "description": "Учетные данные пользователя",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/cridentialForEnterRequest"
+              }
             }
           }
         },
-        "cridentialForRegistrationRequest": {
-          "description": "Учетные данные пользователя для входа.",
-          "type": "object",
-          "required": ["firstName", "email", "password"],
-          "properties": {
-            "firstName": {
-              "type": "string",
-              "description": "Имя. Должно быть уникально, содержать от 2 до 30 символов, содержать хотя бы один отображаекмый символ."
-            },
-            "email": {
-              "type": "string",
-              "description": "Электронная почта",
-              "format": "email"
-            },
-            "password": {
-              "type": "string",
-              "description": "Пароль. Должен содержать от 8 до 60 символов."
+        "responses": {
+          "200": {
+            "description": "Подробные данные пользователя",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/userResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Неверные учетные данные.",
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "$ref": "#/components/schemas/errorResponse"
+                    }
+                }
+            }
+          }
+        }
+      }
+    },
+    "/user/register": {
+      "post": {
+        "tags": ["Вход и регистрация"],
+        "summary": "Регистрация",
+        "requestBody": {
+          "description": "Учетные данные пользователя",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/cridentialForRegistrationRequest"
+              }
             }
           }
         },
-        "userRequest": {
-          "description": "Подробные данные для обновления пользователя.",
-          "type": "object",
-          "required": ["firstName", "secondName", "email", "sex", "photoPath"],
-          "properties": {
-            "firstName": {
-              "type": "string",
-              "description": "Имя"
-            },
-            "secondName": {
-              "type": "string",
-              "description": "Фамилия"
-            },
-            "email": {
-              "type": "string",
-              "description": "Электронная почта"
-            },
-            "sex": {
-              "type": "string",
-              "description": "Пол",
-              "enum": ["male", "female"]
-            },
-            "photoPath": {
-              "type": "string",
-              "description": "Ссылка на фото"
+        "responses": {
+          "200": {
+            "description": "Если нарушено хотя бы одно из ограничений к телу запроса. Подробнее смотри схему тела запроса.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/userResponse"
+                }
+              }
             }
-          }
-        },
-        "userResponse": {
-          "description": "Подробные данные одного конкретного пользователя.",
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "number",
-              "description": "Идентификатор пользователя"
-            },
-            "firstName": {
-              "type": "string",
-              "description": "Имя"
-            },
-            "secondName": {
-              "type": "string",
-              "description": "Фамилия"
-            },
-            "email": {
-              "type": "string",
-              "description": "Электронная почта"
-            },
-            "sex": {
-              "type": "string",
-              "description": "Пол",
-              "enum": ["male", "female"]
-            },
-            "photoPath": {
-              "type": "string",
-              "description": "Ссылка на фото"
-            },
-            "registrationData": {
-              "type": "string",
-              "description": "Дата регистрации в формате dd-mm-yyyy"
-            }
-          }
-        },
-        "errorResponse": {
-          "description": "Описание возвращаемых ошибок.",
-          "type": "object",
-          "properties": {
-            "message": {
-              "type": "string"
+          },
+          "400": {
+            "description": " Подробнее смотри схему тела запроса.",
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "$ref": "#/components/schemas/errorResponse"
+                    }
+                }
             }
           }
         }
       }
     }
+  },
+  "components": {
+    "schemas": {
+      "pageMetaResponse": {
+        "description": "Метаданные страницы, такие как номер, размер, и т.д. Также сюда входят данные об искомой выборке, например: общее кол-во элементов выборки, общее кол-во страниц, на которую эту выборку можно разбить и т.д.",
+        "type": "object",
+        "properties": {
+          "pageSize": {
+            "description": "Размер страницы заданный при запросе",
+            "type": "number"
+          },
+          "pageNumber": {
+            "description": "Номер страницы",
+            "type": "number"
+          },
+          "totalItems": {
+            "description": "Общее кол-во элементов искомой выборки",
+            "type": "number"
+          },
+          "totalPages": {
+            "description": "Общее кол-во страниц, на которую можно разбить искомую выборку. Рассчитывается с учетом задаваемого размера страницы.",
+            "type": "number"
+          },
+          "lastPageNumber": {
+            "description": "Номер последней страницы в искомой выборке.",
+            "type": "number"
+          }
+        }
+      },
+      "userPageResponse": {
+        "type": "object",
+        "properties": {
+          "meta": {
+            "$ref": "#/components/schemas/pageMetaResponse"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/userResponse"
+            }
+          }
+        }
+      },
+      "cridentialForEnterRequest": {
+        "description": "Учетные данные пользователя для входа.",
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Электронная почта"
+          },
+          "password": {
+            "type": "string",
+            "description": "Пароль"
+          }
+        }
+      },
+      "cridentialForRegistrationRequest": {
+        "description": "Учетные данные пользователя для регистрации.",
+        "type": "object",
+        "required": ["firstName", "email", "password"],
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "description": "Имя. Должно содержать от 2 до 30 символов, содержать хотя бы один отображаекмый символ."
+          },
+          "email": {
+            "type": "string",
+            "description": "Электронная почта. Должна быть уникальна.",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "description": "Пароль. Должен содержать от 8 до 60 символов."
+          }
+        }
+      },
+      "userRequest": {
+        "description": "Подробные данные для обновления пользователя.",
+        "type": "object",
+        "required": ["firstName", "secondName", "email", "sex", "photoPath"],
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "description": "Имя. Должно содержать от 2 до 30 символов, содержать хотя бы один отображаекмый символ."
+          },
+          "secondName": {
+            "type": "string",
+            "description": "Фамилия. Должно содержать от 2 до 30 символов, содержать хотя бы один отображаекмый символ."
+          },
+          "email": {
+            "type": "string",
+            "description": "Электронная почта. Должна быть уникальной."
+          },
+          "sex": {
+            "type": "string",
+            "description": "Пол",
+            "enum": ["male", "female"]
+          },
+          "photoPath": {
+            "type": "string",
+            "description": "Ссылка на фото"
+          }
+        }
+      },
+      "userResponse": {
+        "description": "Подробные данные одного конкретного пользователя.",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Идентификатор пользователя"
+          },
+          "firstName": {
+            "type": "string",
+            "description": "Имя"
+          },
+          "secondName": {
+            "type": "string",
+            "description": "Фамилия"
+          },
+          "email": {
+            "type": "string",
+            "description": "Электронная почта"
+          },
+          "sex": {
+            "type": "string",
+            "description": "Пол",
+            "enum": ["male", "female"]
+          },
+          "photoPath": {
+            "type": "string",
+            "description": "Ссылка на фото"
+          },
+          "registrationData": {
+            "type": "string",
+            "description": "Дата регистрации в формате dd-mm-yyyy"
+          }
+        }
+      },
+      "errorResponse": {
+        "description": "Описание возвращаемых ошибок.",
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    }
   }
+}
