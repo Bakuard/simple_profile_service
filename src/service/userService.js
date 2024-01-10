@@ -37,7 +37,9 @@ class UserService {
 
     async update(userId, userData) {
         this.#validationService.assertUpdatedUserIsValid(userData);
-        const user = await this.#userRepository.update(userId, userData);
+        let user = await this.getById(userId);
+        user.update(userData);
+        await this.#userRepository.update(user);
         return user;
     }
 };
