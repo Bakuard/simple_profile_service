@@ -105,7 +105,7 @@
     "/profiles": {
       "get": {
         "tags": ["Профиль пользователя"],
-        "summary": "Возвращает часть выборки из всех пользователей отсортированной по дате регистрации",
+        "summary": "Возвращает часть из выборки всех пользователей отсортированной по дате регистрации",
         "security": [{"common": []}],
         "parameters": [
             {
@@ -148,7 +148,7 @@
         },
         "responses": {
           "200": {
-            "description": "Подробные данные пользователя",
+            "description": "Подробные данные пользователя + JWS токен",
             "content": {
               "application/json": {
                 "schema": {
@@ -187,7 +187,7 @@
         },
         "responses": {
           "200": {
-            "description": "Если нарушено хотя бы одно из ограничений к телу запроса. Подробнее смотри схему тела запроса.",
+            "description": "Подробные данные пользователя + JWS токен",
             "content": {
               "application/json": {
                 "schema": {
@@ -197,7 +197,101 @@
             }
           },
           "400": {
-            "description": " Подробнее смотри схему тела запроса.",
+            "description": "Если нарушено хотя бы одно из ограничений к телу запроса. Подробнее смотри схему тела запроса.",
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "$ref": "#/components/schemas/errorResponse"
+                    }
+                }
+            }
+          }
+        }
+      }
+    },
+    "/upload": {
+      "post": {
+        "tags": ["Файлы"],
+        "summary": "Загрузка изображений на сервер.",
+        "security": [{"common": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "imageField": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Имя изображения, под которым оно сохранено на сервере. Используйте его чтобы задать изображение в профиле пользователя.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/uploadedImageDescription"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Если не было выбрано ни одного файла или MIME тип файла не является png или jpg.",
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "$ref": "#/components/schemas/errorResponse"
+                    }
+                }
+            }
+          },
+          "413": {
+            "description": "Если файл больше 10 мб.",
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "$ref": "#/components/schemas/errorResponse"
+                    }
+                }
+            }
+          }
+        }
+      }
+    },
+    "/static/{imageName}": {
+      "get": {
+        "tags": ["Файлы"],
+        "summary": "Возвращает файл по его имени и расширению.",
+        "parameters": [
+            {
+                "in": "path",
+                "name": "imageName",
+                "description": "Имя файла изображения(включая расширение)",
+                "required": true,
+                "schema": { "type": "string" },
+                "example": "1de31de469b3e34b9faedcb72ea26779.png"
+            }
+        ],
+        "responses": {
+          "200": {
+            "description": "Файл изображения.",
+            "content": {
+              "image/png": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Не удалось найти указанное изображение.",
             "content": {
                 "application/json": {
                     "schema": {
@@ -370,6 +464,16 @@
         "properties": {
           "message": {
             "type": "string"
+          }
+        }
+      },
+      "uploadedImageDescription": {
+        "description": "Данные загруженного изображения.",
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Имя загруженного изображения. Используйте чтобы задать изображение в профиле пользователя."
           }
         }
       }
