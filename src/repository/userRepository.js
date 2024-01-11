@@ -1,6 +1,6 @@
 import User from '../model/user.js';
 import PageMeta from './pageMeta.js';
-import DuplicateEntity from '../exception/duplicateEntity.js';
+import DuplicateEntityException from '../exception/duplicateEntity.js';
 
 class UserRepository {
 
@@ -23,7 +23,7 @@ class UserRepository {
                 return newUser;
             },
             err => {
-                if(err.code == 'ER_DUP_ENTRY') return new DuplicateEntity(`User with email ${newUser.email} alredy exists`);
+                if(err.code == 'ER_DUP_ENTRY') return new DuplicateEntityException(`User with email ${newUser.email} alredy exists`);
                 else return new Error('Internal error', { cause: err })
             }
         );
@@ -39,7 +39,7 @@ class UserRepository {
                 );
             },
             err => {
-                if(err.code == 'ER_DUP_ENTRY') return new DuplicateEntity(`User with email ${updatedUser.email} alredy exists`);
+                if(err.code == 'ER_DUP_ENTRY') return new DuplicateEntityException(`User with email ${updatedUser.email} alredy exists`);
                 else return new Error('Internal error', { cause: err })
             }
         );

@@ -2,7 +2,7 @@ import {jest} from '@jest/globals';
 import UserRepository from '../../src/repository/userRepository.js';
 import ConnectionManager from '../../src/repository/connectionManager.js';
 import User from '../../src/model/user.js';
-import DuplicateEntity from '../../src/exception/duplicateEntity.js'; 
+import DuplicateEntityException from '../../src/exception/duplicateEntity.js'; 
 
 let conectionManager = null;
 let userRepository = null;
@@ -77,7 +77,7 @@ test(`userRepository.add(newUser):
             registrationDate: date
         });
         
-        expect(async () => await userRepository.add(userWithDuplicateEmail)).rejects.toThrow(DuplicateEntity);
+        expect(async () => await userRepository.add(userWithDuplicateEmail)).rejects.toThrow(DuplicateEntityException);
     });
 
 test(`userRepository.add(newUser):
@@ -133,7 +133,7 @@ test(`userRepository.update(updatedUser):
         }));
 
         userWithDuplicateEmail.email = 'me@email.com';
-        expect(async () => await userRepository.update(userWithDuplicateEmail)).rejects.toThrow(DuplicateEntity);
+        expect(async () => await userRepository.update(userWithDuplicateEmail)).rejects.toThrow(DuplicateEntityException);
     });
 
 test(`userRepository.update(updatedUser):
