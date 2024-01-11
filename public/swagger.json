@@ -263,6 +263,45 @@
           }
         }
       }
+    },
+    "/static/{imageName}": {
+      "get": {
+        "tags": ["Файлы"],
+        "summary": "Возвращает файл по его имени и расширению.",
+        "parameters": [
+            {
+                "in": "path",
+                "name": "imageName",
+                "description": "Имя файла изображения(включая расширение)",
+                "required": true,
+                "schema": { "type": "string" },
+                "example": "1de31de469b3e34b9faedcb72ea26779.png"
+            }
+        ],
+        "responses": {
+          "200": {
+            "description": "Файл изображения.",
+            "content": {
+              "image/png": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Не удалось найти указанное изображение.",
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "$ref": "#/components/schemas/errorResponse"
+                    }
+                }
+            }
+          }
+        }
+      }
     }
   },
   "components": {

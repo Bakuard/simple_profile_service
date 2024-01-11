@@ -27,7 +27,11 @@ class ExceptionHandler {
         } else if(err instanceof UploadException) {
             res.status(413).send(this.#dtoMapper.toErrorResponse(err));
         } else {
-            res.status(500).send(this.#dtoMapper.toErrorResponse(err));
+            if(err?.statusCode == 404) {
+                res.status(404).send(this.#dtoMapper.toErrorResponse(err));
+            } else {
+                res.status(500).send(this.#dtoMapper.toErrorResponse(err));
+            }
         }
     }
 }

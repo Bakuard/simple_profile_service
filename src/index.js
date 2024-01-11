@@ -31,6 +31,7 @@ const httpsServer = https.createServer(app);
 app.use(express.json());
 app.use(express.urlencoded());
 app.use('/api', swaggerUi.serve, swaggerUi.setup(swaggerDoc));
+app.use('/static', express.static(process.env.RELATED_PATH_TO_IMAGE_STORE, {fallthrough: false}));
 app.post('/user/register', wrapAsync(userController.registration, userController));
 app.post('/user/loggin', wrapAsync(userController.enter, userController));
 app.use(checkJws);
