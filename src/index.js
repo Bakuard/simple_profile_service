@@ -11,6 +11,7 @@ import JwsService from './service/jwsService.js';
 import AuthService from './service/authService.js';
 import DtoMapper from './dto/dtoMapper.js';
 import UserController from './controller/userController.js';
+import ImageController from './controller/imageController.js';
 import ExceptionHandler from './controller/exceptionHandler.js';
 
 const logger = newLogger('info', 'index.js', 'AuthServise');
@@ -22,6 +23,7 @@ const jwsService = new JwsService();
 const authService = new AuthService(userService, jwsService);
 const dtoMapper = new DtoMapper();
 const userController = new UserController(userService, authService, dtoMapper);
+const imageController = new ImageController();
 const exceptionHandler = new ExceptionHandler(dtoMapper);
 
 const app = express();
@@ -35,6 +37,8 @@ app.use(checkJws);
 app.get('/profile/:id', wrapAsync(userController.getById, userController));
 app.put('/profile/:id', wrapAsync(userController.update, userController));
 app.get('/profiles', wrapAsync(userController.getAll, userController));
+app.use(imageController.settingsMiddleWare());
+app.post('/upload', wrapAsync(imageController.upload, imageController));
 app.use(exceptionHandler.handle.bind(exceptionHandler));
 app.set('json replacer', (key, value) => typeof(value) === "undefined" ? null : value);
 
