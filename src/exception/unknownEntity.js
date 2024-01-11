@@ -1,7 +1,7 @@
-class UnknownEntity extends Error {
+class UnknownEntityException extends Error {
     constructor(logMessage) {
         super(logMessage);
     }
 };
 
-export default UnknownEntity;
+export default UnknownEntityException;

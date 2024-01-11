@@ -1,5 +1,5 @@
 import BadCredentialException from '../exception/badCredential.js';
-import UnknownEntity from '../exception/unknownEntity.js';
+import UnknownEntityException from '../exception/unknownEntity.js';
 import User from '../model/user.js';
 
 class UserService {
@@ -30,9 +30,13 @@ class UserService {
     async getById(userId) {
         const user = await this.#userRepository.findById(userId);
         if(!user) {
-            throw new UnknownEntity(`Unknown user with id=${userId}`);
+            throw new UnknownEntityException(`Unknown user with id=${userId}`);
         }
         return user;
+    }
+
+    async getAll(pageNumber) {
+        return await this.#userRepository.findAll(pageNumber, 10);
     }
 
     async update(userId, userData) {

@@ -1,7 +1,7 @@
-class DuplicateEntity extends Error {
+class DuplicateEntityException extends Error {
     constructor(logMessage) {
         super(logMessage);
     }
 };
 
-export default DuplicateEntity;
+export default DuplicateEntityException;

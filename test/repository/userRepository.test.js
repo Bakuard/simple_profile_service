@@ -1,28 +1,28 @@
 import {jest} from '@jest/globals';
 import UserRepository from '../../src/repository/userRepository.js';
-import ConnectionPool from '../../src/repository/connectionPool.js';
+import ConnectionManager from '../../src/repository/connectionManager.js';
 import User from '../../src/model/user.js';
-import DuplicateEntity from '../../src/exception/duplicateEntity.js'; 
+import DuplicateEntityException from '../../src/exception/duplicateEntity.js'; 
 
-let conectionPool = null;
+let conectionManager = null;
 let userRepository = null;
 
 beforeAll(async () => {
-    conectionPool = new ConnectionPool();
-    userRepository = new UserRepository(conectionPool);
-    await conectionPool.initPool();
+    conectionManager = new ConnectionManager();
+    userRepository = new UserRepository(conectionManager);
+    await conectionManager.initPool();
 });
 
 beforeEach(async () => {
-    await conectionPool.initSchema();
+    await conectionManager.initSchema();
 });
 
 afterEach(async () => {
-    await conectionPool.transaction(async connection => await connection.query(`DROP TABLE IF EXISTS users;`));
+    await conectionManager.transaction(async connection => await connection.query(`DROP TABLE IF EXISTS users;`));
 });
 
 afterAll(async () => {
-    await conectionPool.close();
+    await conectionManager.close();
 });
 
 test(`userRepository.add(newUser):
@@ -77,7 +77,7 @@ test(`userRepository.add(newUser):
             registrationDate: date
         });
         
-        expect(async () => await userRepository.add(userWithDuplicateEmail)).rejects.toThrow(DuplicateEntity);
+        expect(async () => await userRepository.add(userWithDuplicateEmail)).rejects.toThrow(DuplicateEntityException);
     });
 
 test(`userRepository.add(newUser):
@@ -133,7 +133,7 @@ test(`userRepository.update(updatedUser):
         }));
 
         userWithDuplicateEmail.email = 'me@email.com';
-        expect(async () => await userRepository.update(userWithDuplicateEmail)).rejects.toThrow(DuplicateEntity);
+        expect(async () => await userRepository.update(userWithDuplicateEmail)).rejects.toThrow(DuplicateEntityException);
     });
 
 test(`userRepository.update(updatedUser):

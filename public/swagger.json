@@ -341,7 +341,7 @@
             "type": "string",
             "description": "Ссылка на фото"
           },
-          "registrationData": {
+          "registrationDate": {
             "type": "string",
             "description": "Дата регистрации в формате dd-mm-yyyy"
           }

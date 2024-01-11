@@ -4,28 +4,47 @@ const logger = newLogger('info', 'userController.js', 'AuthServise');
 
 class UserController {
 
-    constructor() {
+    #userService;
+    #dtoMapper;
 
+    constructor(userService, dtoMapper) {
+        this.#userService = userService;
+        this.#dtoMapper = dtoMapper;
     }
 
     async enter(req, res, next) {
         logger.info(`user with email '%s' try enter`, req.body.email);
-        res.status(200).send('ok');
+        const user = await this.#userService.enter(req.body);
+        const userResponse = this.#dtoMapper.toUserResponse(user);
+        res.status(200).send(userResponse);
     }
 
     async registration(req, res, next) {
         logger.info(`user '%s' try register`, { firstName: req.body.firstName, email: req.body.email });
-        res.status(200).send('ok');
+        const user = await this.#userService.register(req.body);
+        const userResponse = this.#dtoMapper.toUserResponse(user);
+        res.status(200).send(userResponse);
     }
 
     async getById(req, res, next) {
-        logger.info(`get user by id=%s`, req.params.id);
-        res.status(200).send('ok');
+        logger.info(`get user by id=s%`, req.params.id);
+        const user = await this.#userService.getById(req.params.id);
+        const userResponse = this.#dtoMapper.toUserResponse(user);
+        res.status(200).send(userResponse);
+    }
+
+    async getAll(req, res, next) {
+        logger.info(`get all users with pageNumber=s%`, req.query.page);
+        const page = await this.#userService.getAll(req.query.page);
+        const pageResponse = this.#dtoMapper.toUsersResponse(page);
+        res.status(200).send(pageResponse);
     }
 
     async update(req, res, next) {
         logger.info(`update user by id=%s with data=%s`, req.params.id, req.body);
-        res.status(200).send('ok');
+        const user = await this.#userService.update(req.params.id, req.body);
+        const userResponse = this.#dtoMapper.toUserResponse(user);
+        res.status(200).send(userResponse);
     }
 };
 

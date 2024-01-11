@@ -1,17 +1,17 @@
 import User from '../model/user.js';
 import PageMeta from './pageMeta.js';
-import DuplicateEntity from '../exception/duplicateEntity.js';
+import DuplicateEntityException from '../exception/duplicateEntity.js';
 
 class UserRepository {
 
-    #connectionPool;
+    #connectionManager;
 
-    constructor(connectionPool) {
-        this.#connectionPool = connectionPool;
+    constructor(connectionManager) {
+        this.#connectionManager = connectionManager;
     }
 
     async add(newUser) {
-        return await this.#connectionPool.transaction(
+        return await this.#connectionManager.transaction(
             async (connection) => {
                 const rows = await connection.query(
                     `INSERT INTO users(firstName, secondName, email, passwordHash, salt, sex, photoPath, registrationDate)
@@ -23,14 +23,14 @@ class UserRepository {
                 return newUser;
             },
             err => {
-                if(err.code == 'ER_DUP_ENTRY') return new DuplicateEntity(`User with email ${newUser.email} alredy exists`);
+                if(err.code == 'ER_DUP_ENTRY') return new DuplicateEntityException(`User with email ${newUser.email} alredy exists`);
                 else return new Error('Internal error', { cause: err })
             }
         );
     }
 
     async update(updatedUser) {
-        await this.#connectionPool.transaction(
+        await this.#connectionManager.transaction(
             async (connection) => {
                 await connection.query(
                     `UPDATE users SET firstName=?, secondName=?, email=?, sex=?, photoPath=?, registrationDate=? WHERE id=?;`,
@@ -39,14 +39,14 @@ class UserRepository {
                 );
             },
             err => {
-                if(err.code == 'ER_DUP_ENTRY') return new DuplicateEntity(`User with email ${updatedUser.email} alredy exists`);
+                if(err.code == 'ER_DUP_ENTRY') return new DuplicateEntityException(`User with email ${updatedUser.email} alredy exists`);
                 else return new Error('Internal error', { cause: err })
             }
         );
     }
 
     async findById(userId) {
-        const rows = await this.#connectionPool.getPool().query(
+        const rows = await this.#connectionManager.getPool().query(
             `SELECT * FROM users WHERE id=?;`,
             [userId]
         );
@@ -54,7 +54,7 @@ class UserRepository {
     }
 
     async findByEmail(email) {
-        const rows = await this.#connectionPool.getPool().query(
+        const rows = await this.#connectionManager.getPool().query(
             `SELECT * FROM users WHERE email=?;`,
             [email]
         );
@@ -62,7 +62,7 @@ class UserRepository {
     }
 
     async findAll(pageNumber, pageSize) {
-        const connection = await this.#connectionPool.getPool().getConnection();
+        const connection = await this.#connectionManager.getPool().getConnection();
 
         const totalItems = await connection.query(`SELECT COUNT(*) AS result FROM users;`);
         const pageMeta = new PageMeta(pageSize, pageNumber, totalItems[0][0].result);
