@@ -21,6 +21,13 @@ class DtoMapper {
         };
     }
 
+    toJwsResponse(userWithJws) {
+        return {
+            jws: userWithJws.jws,
+            user: this.toUserResponse(userWithJws.user)
+        };
+    }
+
     toErrorResponse(error) {
         return {
             message: error.message

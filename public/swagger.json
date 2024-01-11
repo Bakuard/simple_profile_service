@@ -9,6 +9,7 @@
       "get": {
         "tags": ["Профиль пользователя"],
         "summary": "Возвращает данные пользователя по его id.",
+        "security": [{"common": []}],
         "parameters": [
             {
                 "in": "path",
@@ -45,6 +46,7 @@
       "put": {
         "tags": ["Профиль пользователя"],
         "summary": "Обновляет данные пользователя с указанным id.",
+        "security": [{"common": []}],
         "parameters": [
             {
                 "in": "path",
@@ -104,6 +106,7 @@
       "get": {
         "tags": ["Профиль пользователя"],
         "summary": "Возвращает часть выборки из всех пользователей отсортированной по дате регистрации",
+        "security": [{"common": []}],
         "parameters": [
             {
                 "in": "query",
@@ -149,7 +152,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/userResponse"
+                  "$ref": "#/components/schemas/jwsResponse"
                 }
               }
             }
@@ -188,7 +191,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/userResponse"
+                  "$ref": "#/components/schemas/jwsResponse"
                 }
               }
             }
@@ -347,6 +350,20 @@
           }
         }
       },
+      "jwsResponse": {
+        "description": "Даные пользователя и jws токен.",
+        "type": "object",
+        "properties": {
+          "jws": {
+            "type": "string",
+            "example": "token-value",
+            "description": "Токен доступа. Используйте его для доступа к защищенным endpoints."
+          },
+          "user": {
+            "$ref": "#/components/schemas/userResponse"
+          }
+        }
+      },
       "errorResponse": {
         "description": "Описание возвращаемых ошибок.",
         "type": "object",
@@ -355,6 +372,13 @@
             "type": "string"
           }
         }
+      }
+    },
+    "securitySchemes": {
+      "common": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
       }
     }
   }

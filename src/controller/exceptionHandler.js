@@ -2,6 +2,7 @@ import BadCredentialException from '../exception/badCredential.js';
 import UnknownEntityException from '../exception/unknownEntity.js';
 import DuplicateEntityException from '../exception/duplicateEntity.js';
 import ValidationException from '../exception/validationException.js';
+import InvalidTokenException from '../exception/invalidToken.js';
 import newLogger from '../conf/logConf.js';
 
 const logger = newLogger('error', 'exceptionHandler.js', 'AuthServise');
@@ -16,7 +17,7 @@ class ExceptionHandler {
 
     handle(err, req, res, next) {
         logger.error('message: %s; stack: %s; cause: %s', err.message, err.stack, err.cause);
-        if(err instanceof BadCredentialException) {
+        if(err instanceof BadCredentialException || err instanceof InvalidTokenException) {
             res.status(403).send(this.#dtoMapper.toErrorResponse(err));
         } else if(err instanceof UnknownEntityException) {
             res.status(404).send(this.#dtoMapper.toErrorResponse(err));

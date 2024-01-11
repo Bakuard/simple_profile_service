@@ -5,25 +5,27 @@ const logger = newLogger('info', 'userController.js', 'AuthServise');
 class UserController {
 
     #userService;
+    #authService;
     #dtoMapper;
 
-    constructor(userService, dtoMapper) {
+    constructor(userService, authService, dtoMapper) {
         this.#userService = userService;
+        this.#authService = authService;
         this.#dtoMapper = dtoMapper;
     }
 
     async enter(req, res, next) {
         logger.info(`user with email '%s' try enter`, req.body.email);
-        const user = await this.#userService.enter(req.body);
-        const userResponse = this.#dtoMapper.toUserResponse(user);
-        res.status(200).send(userResponse);
+        const userWithJws = await this.#authService.enter(req.body);
+        const userWithJwsResponse = this.#dtoMapper.toJwsResponse(userWithJws);
+        res.status(200).send(userWithJwsResponse);
     }
 
     async registration(req, res, next) {
         logger.info(`user '%s' try register`, { firstName: req.body.firstName, email: req.body.email });
-        const user = await this.#userService.register(req.body);
-        const userResponse = this.#dtoMapper.toUserResponse(user);
-        res.status(200).send(userResponse);
+        const userWithJws = await this.#authService.registerByMailWithoutConfirmation(req.body);
+        const userWithJwsResponse = this.#dtoMapper.toJwsResponse(userWithJws);
+        res.status(200).send(userWithJwsResponse);
     }
 
     async getById(req, res, next) {
