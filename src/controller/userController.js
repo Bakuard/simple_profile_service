@@ -4,8 +4,10 @@ const logger = newLogger('info', 'userController.js', 'AuthServise');
 
 class UserController {
 
-    constructor() {
+    #userService;
 
+    constructor(userService) {
+        this.#userService = userService;
     }
 
     async enter(req, res, next) {

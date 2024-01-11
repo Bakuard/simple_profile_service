@@ -1,9 +1,9 @@
 import mysql from 'mysql2/promise';
 import newLogger from '../conf/logConf.js';
 
-const logger = newLogger('info', 'connectionPool.js', 'AuthServise');
+const logger = newLogger('info', 'connectionManager.js', 'AuthServise');
 
-class ConnectionPool {
+class ConnectionManager {
 
     #pool;
 
@@ -69,4 +69,4 @@ class ConnectionPool {
     }
 }
 
-export default ConnectionPool;
+export default ConnectionManager;
