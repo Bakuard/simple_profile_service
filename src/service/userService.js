@@ -1,4 +1,3 @@
-import BadCredentialException from '../exception/badCredential.js';
 import UnknownEntityException from '../exception/unknownEntity.js';
 import User from '../model/user.js';
 
@@ -12,18 +11,18 @@ class UserService {
         this.#validationService = validationService;
     }
 
-    async enter(cridential) {
-        const user = await this.#userRepository.findByEmail(cridential.email);
-        if(!user?.isPaswordValid(cridential.password)) {
-            throw new BadCredentialException('Incorrect email or password');
-        }
+    async add(newUser) {
+        this.#validationService.assertNewUserIsValid(newUser);
+        let user = User.createNewUser(newUser);
+        user = await this.#userRepository.add(user);
         return user;
     }
 
-    async register(cridential) {
-        this.#validationService.assertNewUserIsValid(cridential);
-        let user = User.createNewUser(cridential);
-        user = await this.#userRepository.add(user);
+    async getByEmail(email) {
+        const user = await this.#userRepository.findByEmail(email);
+        if(!user) {
+            throw new UnknownEntityException(`Unknown user with email=${email}`);
+        }
         return user;
     }
 
