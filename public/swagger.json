@@ -275,7 +275,7 @@
           },
           "email": {
             "type": "string",
-            "description": "Электронная почта. Должна быть уникальна.",
+            "description": "Электронная почта. Должна быть уникальна, содержать максимум 50 символов.",
             "format": "email"
           },
           "password": {
@@ -287,7 +287,7 @@
       "userRequest": {
         "description": "Подробные данные для обновления пользователя.",
         "type": "object",
-        "required": ["firstName", "secondName", "email", "sex", "photoPath"],
+        "required": ["firstName", "email"],
         "properties": {
           "firstName": {
             "type": "string",

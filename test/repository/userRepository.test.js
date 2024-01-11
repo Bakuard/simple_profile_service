@@ -164,7 +164,6 @@ test(`userRepository.update(updatedUser):
         updatedUser.email = 'new-email@mail.com';
         updatedUser.sex = 'male';
         updatedUser.photoPath = 'new-photo-path';
-        updatedUser.registrationDate = date;
 
         await userRepository.update(updatedUser);
         const actualUser = await userRepository.findById(updatedUser.id);
