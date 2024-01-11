@@ -22,20 +22,19 @@ class User {
     }
 
     isPaswordValid(password) {
-        return crypto.scryptSync(password, this.salt, 64).toString('hex') === this.passwordHash;
+        return password && crypto.scryptSync(password, this.salt, 64).toString('hex') === this.passwordHash;
     }
 
     hasMaleSex() {
         return 'male' === this.sex;
     }
 
-    update({firstName, secondName, email, sex, photoPath, registrationDate}) {
+    update({firstName, secondName, email, sex, photoPath}) {
         this.firstName = firstName;
         this.secondName = secondName;
         this.email = email;
         this.sex = sex;
         this.photoPath = photoPath;
-        this.registrationDate = registrationDate;
     }
 };
 
