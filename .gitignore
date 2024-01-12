@@ -1,4 +1,9 @@
-/node_modules/**
-/logs/**
-/externalConfig/**
-/.vscode/**
+/*
+/*/
+!/public/
+!/src/
+!/test/
+!/.env/
+!/package.json
+!/package-lock.json
+!/db_dump.sql

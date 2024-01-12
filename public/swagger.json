@@ -1,0 +1,489 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Auth server",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/profile/{id}": {
+      "get": {
+        "tags": ["Профиль пользователя"],
+        "summary": "Возвращает данные пользователя по его id.",
+        "security": [{"common": []}],
+        "parameters": [
+            {
+                "in": "path",
+                "name": "id",
+                "description": "Идентификатор пользователя",
+                "required": true,
+                "schema": { "type": "number" },
+                "example": "15"
+            }
+        ],
+        "responses": {
+          "200": {
+            "description": "Подробные данные пользователя",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/userResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Не удалось найти пользователя с таким id",
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "$ref": "#/components/schemas/errorResponse"
+                    }
+                }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Профиль пользователя"],
+        "summary": "Обновляет данные пользователя с указанным id.",
+        "security": [{"common": []}],
+        "parameters": [
+            {
+                "in": "path",
+                "name": "id",
+                "description": "Идентификатор пользователя",
+                "required": true,
+                "schema": { "type": "number" },
+                "example": "15"
+            }
+        ],
+        "requestBody": {
+          "description": "Данные для обновления пользователя",
+          "required": true,
+          "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/userRequest"
+                }
+              }
+            }
+        },
+        "responses": {
+          "200": {
+            "description": "Подробные данные пользователя",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/userResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Если нарушено хотя бы одно из ограничений к телу запроса. Подробнее смотри схему тела запроса.",
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "$ref": "#/components/schemas/errorResponse"
+                    }
+                }
+            }
+          },
+          "404": {
+            "description": "Не удалось найти пользователя с таким id",
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "$ref": "#/components/schemas/errorResponse"
+                    }
+                }
+            }
+          }
+        }
+      }
+    },
+    "/profiles": {
+      "get": {
+        "tags": ["Профиль пользователя"],
+        "summary": "Возвращает часть из выборки всех пользователей отсортированной по дате регистрации",
+        "security": [{"common": []}],
+        "parameters": [
+            {
+                "in": "query",
+                "name": "page",
+                "description": "Номер страницы. Нумерация страниц начинается с 0.",
+                "required": true,
+                "schema": { "type": "number" },
+                "example": "1"
+            }
+        ],
+        "responses": {
+          "200": {
+            "description": "Подробные данные нескльких пользователей.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/userPageResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/loggin": {
+      "post": {
+        "tags": ["Вход и регистрация"],
+        "summary": "Вход (Аутентификация)",
+        "requestBody": {
+          "description": "Учетные данные пользователя",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/cridentialForEnterRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Подробные данные пользователя + JWS токен",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/jwsResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Неверные учетные данные.",
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "$ref": "#/components/schemas/errorResponse"
+                    }
+                }
+            }
+          }
+        }
+      }
+    },
+    "/user/register": {
+      "post": {
+        "tags": ["Вход и регистрация"],
+        "summary": "Регистрация",
+        "requestBody": {
+          "description": "Учетные данные пользователя",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/cridentialForRegistrationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Подробные данные пользователя + JWS токен",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/jwsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Если нарушено хотя бы одно из ограничений к телу запроса. Подробнее смотри схему тела запроса.",
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "$ref": "#/components/schemas/errorResponse"
+                    }
+                }
+            }
+          }
+        }
+      }
+    },
+    "/upload": {
+      "post": {
+        "tags": ["Файлы"],
+        "summary": "Загрузка изображений на сервер.",
+        "security": [{"common": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "imageField": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Имя изображения, под которым оно сохранено на сервере. Используйте его чтобы задать изображение в профиле пользователя.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/uploadedImageDescription"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Если не было выбрано ни одного файла или MIME тип файла не является png или jpg.",
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "$ref": "#/components/schemas/errorResponse"
+                    }
+                }
+            }
+          },
+          "413": {
+            "description": "Если файл больше 10 мб.",
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "$ref": "#/components/schemas/errorResponse"
+                    }
+                }
+            }
+          }
+        }
+      }
+    },
+    "/static/{imageName}": {
+      "get": {
+        "tags": ["Файлы"],
+        "summary": "Возвращает файл по его имени и расширению.",
+        "parameters": [
+            {
+                "in": "path",
+                "name": "imageName",
+                "description": "Имя файла изображения(включая расширение)",
+                "required": true,
+                "schema": { "type": "string" },
+                "example": "1de31de469b3e34b9faedcb72ea26779.png"
+            }
+        ],
+        "responses": {
+          "200": {
+            "description": "Файл изображения.",
+            "content": {
+              "image/png": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Не удалось найти указанное изображение.",
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "$ref": "#/components/schemas/errorResponse"
+                    }
+                }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "pageMetaResponse": {
+        "description": "Метаданные страницы, такие как номер, размер, и т.д. Также сюда входят данные об искомой выборке, например: общее кол-во элементов выборки, общее кол-во страниц, на которую эту выборку можно разбить и т.д.",
+        "type": "object",
+        "properties": {
+          "pageSize": {
+            "description": "Размер страницы заданный при запросе",
+            "type": "number"
+          },
+          "pageNumber": {
+            "description": "Номер страницы",
+            "type": "number"
+          },
+          "totalItems": {
+            "description": "Общее кол-во элементов искомой выборки",
+            "type": "number"
+          },
+          "totalPages": {
+            "description": "Общее кол-во страниц, на которую можно разбить искомую выборку. Рассчитывается с учетом задаваемого размера страницы.",
+            "type": "number"
+          },
+          "lastPageNumber": {
+            "description": "Номер последней страницы в искомой выборке.",
+            "type": "number"
+          }
+        }
+      },
+      "userPageResponse": {
+        "type": "object",
+        "properties": {
+          "meta": {
+            "$ref": "#/components/schemas/pageMetaResponse"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/userResponse"
+            }
+          }
+        }
+      },
+      "cridentialForEnterRequest": {
+        "description": "Учетные данные пользователя для входа.",
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Электронная почта"
+          },
+          "password": {
+            "type": "string",
+            "description": "Пароль"
+          }
+        }
+      },
+      "cridentialForRegistrationRequest": {
+        "description": "Учетные данные пользователя для регистрации.",
+        "type": "object",
+        "required": ["firstName", "email", "password"],
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "description": "Имя. Должно содержать от 2 до 30 символов, содержать хотя бы один отображаекмый символ."
+          },
+          "email": {
+            "type": "string",
+            "description": "Электронная почта. Должна быть уникальна, содержать максимум 50 символов.",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "description": "Пароль. Должен содержать от 8 до 60 символов."
+          }
+        }
+      },
+      "userRequest": {
+        "description": "Подробные данные для обновления пользователя.",
+        "type": "object",
+        "required": ["firstName", "email"],
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "description": "Имя. Должно содержать от 2 до 30 символов, содержать хотя бы один отображаекмый символ."
+          },
+          "secondName": {
+            "type": "string",
+            "description": "Фамилия. Должно содержать от 2 до 30 символов, содержать хотя бы один отображаекмый символ."
+          },
+          "email": {
+            "type": "string",
+            "description": "Электронная почта. Должна быть уникальной."
+          },
+          "sex": {
+            "type": "string",
+            "description": "Пол",
+            "enum": ["male", "female"]
+          },
+          "photoPath": {
+            "type": "string",
+            "description": "Ссылка на фото"
+          }
+        }
+      },
+      "userResponse": {
+        "description": "Подробные данные одного конкретного пользователя.",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Идентификатор пользователя"
+          },
+          "firstName": {
+            "type": "string",
+            "description": "Имя"
+          },
+          "secondName": {
+            "type": "string",
+            "description": "Фамилия"
+          },
+          "email": {
+            "type": "string",
+            "description": "Электронная почта"
+          },
+          "sex": {
+            "type": "string",
+            "description": "Пол",
+            "enum": ["male", "female"]
+          },
+          "photoPath": {
+            "type": "string",
+            "description": "Ссылка на фото"
+          },
+          "registrationDate": {
+            "type": "string",
+            "description": "Дата регистрации в формате dd-mm-yyyy"
+          }
+        }
+      },
+      "jwsResponse": {
+        "description": "Даные пользователя и jws токен.",
+        "type": "object",
+        "properties": {
+          "jws": {
+            "type": "string",
+            "example": "token-value",
+            "description": "Токен доступа. Используйте его для доступа к защищенным endpoints."
+          },
+          "user": {
+            "$ref": "#/components/schemas/userResponse"
+          }
+        }
+      },
+      "errorResponse": {
+        "description": "Описание возвращаемых ошибок.",
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "uploadedImageDescription": {
+        "description": "Данные загруженного изображения.",
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Имя загруженного изображения. Используйте чтобы задать изображение в профиле пользователя."
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "common": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
