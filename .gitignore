@@ -6,3 +6,4 @@
 !/.env/
 !/package.json
 !/package-lock.json
+!/db_dump.sql
