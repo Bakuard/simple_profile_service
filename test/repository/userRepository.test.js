@@ -30,15 +30,17 @@ test(`userRepository.add(newUser):
        => add user`, 
     async () => {
         const date = new Date();
-        let user = User.createNewUser({
-            firstName: 'first-name',
-            secondName: 'second-name',
-            email: 'me@email.com',
-            password: 'some-password',
-            sex: 'male',
-            photoPath: 'some-path',
-            registrationDate: date
-        });
+        let user = new User(
+            null,
+            'first-name',
+            'second-name',
+            'me@email.com',
+            'some-password-hash',
+            'some-salt',
+            'male',
+            'some-path',
+            date
+        );
         user = await userRepository.add(user);
 
         const actualUser = await userRepository.findById(user.id);
@@ -47,6 +49,8 @@ test(`userRepository.add(newUser):
             firstName: 'first-name',
             secondName: 'second-name',
             email: 'me@email.com',
+            passwordHash: 'some-password-hash',
+            salt: 'some-salt',
             sex: 'male',
             photoPath: 'some-path',
             registrationDate: date
@@ -58,24 +62,28 @@ test(`userRepository.add(newUser):
         => exception`, 
     async () => {
         const date = new Date();
-        await userRepository.add(User.createNewUser({
-            firstName: 'first-name',
-            secondName: 'second-name',
-            email: 'me@email.com',
-            password: 'some-password',
-            sex: 'male',
-            photoPath: 'some-path',
-            registrationDate: date
-        }));
-        let userWithDuplicateEmail = User.createNewUser({
-            firstName: 'other-first-name',
-            secondName: 'other-second-name',
-            email: 'me@email.com',
-            password: 'other-password',
-            sex: 'female',
-            photoPath: 'other-some-path',
-            registrationDate: date
-        });
+        await userRepository.add(new User(
+            null,
+            'first-name',
+            'second-name',
+            'me@email.com',
+            'some-password-hash',
+            'some-salt',
+            'male',
+            'some-path',
+            date
+        ));
+        let userWithDuplicateEmail = new User(
+            null,
+            'other-first-name',
+            'other-second-name',
+            'me@email.com',
+            'other-password-hash',
+            'other-salt',
+            'female',
+            'other-some-path',
+            date
+        );
         
         expect(async () => await userRepository.add(userWithDuplicateEmail)).rejects.toThrow(DuplicateEntityException);
     });
@@ -85,15 +93,17 @@ test(`userRepository.add(newUser):
         => add user`, 
     async () => {
         const date = new Date();
-        let user = User.createNewUser({
-            firstName: 'first-name',
-            secondName: undefined,
-            email: 'me@email.com',
-            password: 'some-password',
-            sex: undefined,
-            photoPath: undefined,
-            registrationDate: date
-        });
+        let user = new User(
+            null,
+            'first-name',
+            undefined,
+            'me@email.com',
+            'some-password-hash',
+            'some-salt',
+            undefined,
+            undefined,
+            date
+        );
         user = await userRepository.add(user);
 
         const actualUser = await userRepository.findById(user.id);
@@ -102,6 +112,8 @@ test(`userRepository.add(newUser):
             firstName: 'first-name',
             secondName: null,
             email: 'me@email.com',
+            passwordHash: 'some-password-hash',
+            salt: 'some-salt',
             sex: 'male',
             photoPath: null,
             registrationDate: date
@@ -113,24 +125,28 @@ test(`userRepository.update(updatedUser):
         => exception`, 
     async () => {
         const date = new Date();
-        await userRepository.add(User.createNewUser({
-            firstName: 'first-name',
-            secondName: 'second-name',
-            email: 'me@email.com',
-            password: 'some-password',
-            sex: 'male',
-            photoPath: 'some-path',
-            registrationDate: date
-        }));
-        let userWithDuplicateEmail = await userRepository.add(User.createNewUser({
-            firstName: 'other-first-name',
-            secondName: 'other-second-name',
-            email: 'other@email.com',
-            password: 'other-password',
-            sex: 'female',
-            photoPath: 'other-some-path',
-            registrationDate: date
-        }));
+        await userRepository.add(new User(
+            null,
+            'first-name',
+            'second-name',
+            'me@email.com',
+            'some-password-hash',
+            'some-salt',
+            'male',
+            'some-path',
+            date
+        ));
+        let userWithDuplicateEmail = await userRepository.add(new User(
+            null,
+            'other-first-name',
+            'other-second-name',
+            'other@email.com',
+            'other-password-hash',
+            'other-salt',
+            'female',
+            'other-some-path',
+            date
+        ));
 
         userWithDuplicateEmail.email = 'me@email.com';
         expect(async () => await userRepository.update(userWithDuplicateEmail)).rejects.toThrow(DuplicateEntityException);
@@ -141,24 +157,28 @@ test(`userRepository.update(updatedUser):
         => update user`, 
     async () => {
         const date = new Date();
-        await userRepository.add(User.createNewUser({
-            firstName: 'first-name',
-            secondName: 'second-name',
-            email: 'me@email.com',
-            password: 'some-password',
-            sex: 'male',
-            photoPath: 'some-path',
-            registrationDate: date
-        }));
-        let updatedUser = await userRepository.add(User.createNewUser({
-            firstName: 'other-first-name',
-            secondName: 'other-second-name',
-            email: 'other@email.com',
-            password: 'other-password',
-            sex: 'female',
-            photoPath: 'other-some-path',
-            registrationDate: date
-        }));
+        await userRepository.add(new User(
+            null,
+            'first-name',
+            'second-name',
+            'me@email.com',
+            'some-password-hash',
+            'some-salt',
+            'male',
+            'some-path',
+            date
+        ));
+        let updatedUser = await userRepository.add(new User(
+            null,
+            'other-first-name',
+            'other-second-name',
+            'other@email.com',
+            'other-password-hash',
+            'other-salt',
+            'female',
+            'other-some-path',
+            date
+        ));
         updatedUser.firstName = 'new-first-name';
         updatedUser.secondName = 'new-second-name';
         updatedUser.email = 'new-email@mail.com';
@@ -172,6 +192,8 @@ test(`userRepository.update(updatedUser):
             firstName: 'new-first-name',
             secondName: 'new-second-name',
             email: 'new-email@mail.com',
+            passwordHash: 'other-password-hash',
+            salt: 'other-salt',
             sex: 'male',
             photoPath: 'new-photo-path',
             registrationDate: date
@@ -182,15 +204,17 @@ test(`userRepository.findByEmail(email):
         there is user with such email
         => return user`,
     async () => {
-        const expectedUser = await userRepository.add(User.createNewUser({
-            firstName: 'first-name',
-            secondName: 'second-name',
-            email: 'me@email.com',
-            password: 'some-password',
-            sex: 'male',
-            photoPath: 'some-path',
-            registrationDate: new Date()
-        }));
+        const expectedUser = await userRepository.add(new User(
+            null,
+            'first-name',
+            'second-name',
+            'me@email.com',
+            'some-password-hash',
+            'some-salt',
+            'male',
+            'some-path',
+            new Date()
+        ));
 
         const actualUser = await userRepository.findByEmail('me@email.com');
 
@@ -201,15 +225,17 @@ test(`userRepository.findByEmail(email):
         there is not user with such email
         => return null`,
     async () => {
-        await userRepository.add(User.createNewUser({
-            firstName: 'first-name',
-            secondName: 'second-name',
-            email: 'me@email.com',
-            password: 'some-password',
-            sex: 'male',
-            photoPath: 'some-path',
-            registrationDate: new Date()
-        }));
+        await userRepository.add(new User(
+            null,
+            'first-name',
+            'second-name',
+            'me@email.com',
+            'some-password-hash',
+            'some-salt',
+            'male',
+            'some-path',
+            new Date()
+        ));
 
         const actualUser = await userRepository.findByEmail('unknown@email.com');
 
@@ -220,15 +246,17 @@ test(`userRepository.findById(id):
         there is not user with such id
         => return null`,
     async () => {
-        await userRepository.add(User.createNewUser({
-            firstName: 'first-name',
-            secondName: 'second-name',
-            email: 'me@email.com',
-            password: 'some-password',
-            sex: 'male',
-            photoPath: 'some-path',
-            registrationDate: new Date()
-        }));
+        await userRepository.add(new User(
+            null,
+            'first-name',
+            'second-name',
+            'me@email.com',
+            'some-password-hash',
+            'some-salt',
+            'male',
+            'some-path',
+            new Date()
+        ));
 
         const actualUser = await userRepository.findById(1000);
 
@@ -244,33 +272,39 @@ test(`userRepository.findAll(pageNumber, pageSize):
         const date1 = new Date('2022-01-01T00:00:00.000Z');
         const date2 = new Date('2022-01-02T00:00:00.000Z');
         const date3 = new Date('2022-01-03T00:00:00.000Z');
-        const user1 = await userRepository.add(User.createNewUser({
-            firstName: 'first-name1',
-            secondName: 'second-name1',
-            email: 'me1@email.com',
-            password: 'some-1',
-            sex: 'male',
-            photoPath: 'some-path1',
-            registrationDate: date2
-        }));
-        const user2 = await userRepository.add(User.createNewUser({
-            firstName: 'first-name2',
-            secondName: 'second-name2',
-            email: 'me2@email.com',
-            password: 'some-password2',
-            sex: 'female',
-            photoPath: 'some-path2',
-            registrationDate: date1
-        }));
-        const user3 = await userRepository.add(User.createNewUser({
-            firstName: 'first-name3',
-            secondName: 'second-name3',
-            email: 'me3@email.com',
-            password: 'some-password3',
-            sex: 'male',
-            photoPath: 'some-path3',
-            registrationDate: date3
-        }));
+        const user1 = await userRepository.add(new User(
+            null,
+            'first-name1',
+            'second-name1',
+            'me1@email.com',
+            'some-password-hash1',
+            'some-salt1',
+            'male',
+            'some-path1',
+            date2
+        ));
+        const user2 = await userRepository.add(new User(
+            null,
+            'first-name2',
+            'second-name2',
+            'me2@email.com',
+            'some-password-hash2',
+            'some-salt2',
+            'female',
+            'some-path2',
+            date1
+        ));
+        const user3 = await userRepository.add(new User(
+            null,
+            'first-name3',
+            'second-name3',
+            'me3@email.com',
+            'some-password-hash3',
+            'some-salt3',
+            'male',
+            'some-path3',
+            date3
+        ));
 
         const actualPage = await userRepository.findAll(0, 10);
 
